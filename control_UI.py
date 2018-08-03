@@ -3,9 +3,10 @@ from PyQt5.QtCore import Qt
 import sys
 import serial
 
-#The following line is for serial over GPIO
+# The following line is for serial over GPIO
 port = 'COM3'
-ard = serial.Serial(port,9600,timeout=5)
+ard = serial.Serial(port, 9600, timeout=5)
+
 
 class Slider_Control(QWidget):
     def __init__(self):
@@ -20,7 +21,7 @@ class Slider_Control(QWidget):
         BASE_label = QLabel('Base')
         CRAW_label = QLabel('Craw')
 
-        #define a slider that can control the elbow
+        # define a slider that can control the elbow
         self.ELBOW_slider = QSlider(Qt.Horizontal, self)
         self.ELBOW_slider.setFocusPolicy(Qt.NoFocus)
         self.ELBOW_slider.setMinimum(0)
@@ -114,55 +115,62 @@ class Slider_Control(QWidget):
 
     def ELBOW_show(self):
         self.ELBOW_num.setText(str(self.ELBOW_slider.value()))
+
     def ELBOW_changed(self):
         info = str(1) + ',' + str(self.ELBOW_slider.value())
-        #print(self.ELBOW_slider.value())
+        # print(self.ELBOW_slider.value())
         ard.write(str.encode(info))
 
     def SHOULDER_show(self):
         self.SHOULDER_num.setText(str(self.SHOULDER_slider.value()))
+
     def SHOULDER_changed(self):
         info = str(2) + ',' + str(self.SHOULDER_slider.value())
-        #print(self.SHOULDER_slider.value())
+        # print(self.SHOULDER_slider.value())
         ard.write(str.encode(info))
 
     def WRISTx_show(self):
         self.WRISTx_num.setText(str(self.WRISTx_slider.value()))
+
     def WRISTx_changed(self):
         info = str(3) + ',' + str(self.WRISTx_slider.value())
-        #print(self.WRISTx_slider.value())
+        # print(self.WRISTx_slider.value())
         ard.write(str.encode(info))
 
     def WRISTy_show(self):
         self.WRISTy_num.setText(str(self.WRISTy_slider.value()))
+
     def WRISTy_changed(self):
         info = str(4) + ',' + str(self.WRISTy_slider.value())
-        #print(self.WRISTy_slider.value())
+        # print(self.WRISTy_slider.value())
         ard.write(str.encode(info))
 
     def WRISTz_show(self):
         self.WRISTz_num.setText(str(self.WRISTz_slider.value()))
+
     def WRISTz_changed(self):
         info = str(5) + ',' + str(self.WRISTz_slider.value())
-        #print(self.WRISTz_slider.value())
+        # print(self.WRISTz_slider.value())
         ard.write(str.encode(info))
 
     def BASE_show(self):
         self.BASE_num.setText(str(self.BASE_slider.value()))
+
     def BASE_changed(self):
         info = str(6) + ',' + str(self.BASE_slider.value())
-        #print(self.BASE_slider.value())
+        # print(self.BASE_slider.value())
         ard.write(str.encode(info))
 
     def CRAW_show(self):
         self.CRAW_num.setText(str(self.CRAW_slider.value()))
+
     def CRAW_changed(self):
         info = str(7) + ',' + str(self.CRAW_slider.value())
-        #print(self.CRAW_slider.value())
+        # print(self.CRAW_slider.value())
         ard.write(str.encode(info))
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Slider_Control()
     sys.exit(app.exec_())
-
