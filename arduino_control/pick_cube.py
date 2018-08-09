@@ -1,23 +1,21 @@
 import cv2
+import numpy as np
 
-xr_robot=0
-yr_robot=0
-zr_robot=0
+filename = '2.jpg'
 
-xg_robot=0
-yg_robot=0
-zg_robot=0
+img = cv2.imread(filename)
+gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+gray = np.float32(gray)
+#图像转换为float32
+dst = cv2.cornerHarris(gray,2,3,0.04)
+#result is dilated for marking the corners, not important
+dst = cv2.dilate(dst,None)#图像膨胀
+# Threshold for an optimal value, it may vary depending on the image.
+#print(dst)
+#img[dst>0.00000001*dst.max()]=[0,0,255] #可以试试这个参数，角点被标记的多余了一些
+img[dst>0.01*dst.max()]=[0,0,255]#角点位置用红色标记
+#这里的打分值以大于0.01×dst中最大值为边界
 
-xb_robot=0
-yb_robot=0
-zb_robot=0
-
-cm_por_pixel = 0
-
-# get image from webcam
-cap = cv2.VideoCapture(1)
-ret, frame = cap.read()
-
-(B,G,R) = cv2.split(frame)
-
-print('finish')
+cv2.imshow('dst',img)
+if cv2.waitKey(0) & 0xff == 27:
+    cv2.destroyAllWindows()
