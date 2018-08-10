@@ -3,15 +3,15 @@ from arduino_control.yolov3.yolo import YOLO, detect_video
 from PIL import Image
 from pyzbar import pyzbar
 
-def get_position_of_box(message):
+def get_position_of_box(yolo, message):
 
     # using yolov3 to detect cups
-    boxes = make_detection(YOLO(), 'image/object.jpg')
+    boxes = make_detection(yolo, 'images/object.jpg')
 
     for box in boxes:
         if box['class'] != 'cup':
             continue
-        im = Image.open('object.jpg')
+        im = Image.open('images/object.jpg')
         region = im.crop((box['left'], box['top'], box['right'], box['bottom']))
         # region.save('box.jpg')
         detect_objs = pyzbar.decode(region)

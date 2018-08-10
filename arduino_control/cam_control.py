@@ -4,8 +4,6 @@ import os
 import time
 import face_recognition
 
-unknown_pic_path = 'images/'
-known_pic_path = 'images/'
 
 def get_cam():
     # webcam 的代号是 1 ，电脑自带前置摄像头是 0
@@ -20,12 +18,11 @@ def get_cam():
             count = count + 1
             # Capture frame-by-frame
             ret, frame = cap.read()
-            print(count)
+            # print(count)
             cv2.imshow('frame', frame)
             # if cv2.waitKey(1) & 0xFF == ord('q'):
-            if count % 4 == 0:
-                name = 'object'
-                name = os.path.join(unknown_pic_path, name)
+            if count % 30 == 0:
+                name = 'images/object.jpg'
                 cv2.imwrite(name, frame)
                 # break
 
