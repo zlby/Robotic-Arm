@@ -6,7 +6,7 @@ from pyzbar import pyzbar
 def get_position_of_box(message):
 
     # using yolov3 to detect cups
-    boxes = make_detection(YOLO(), 'object.jpg')
+    boxes = make_detection(YOLO(), 'image/object.jpg')
 
     for box in boxes:
         if box['class'] != 'cup':
