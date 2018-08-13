@@ -30,29 +30,13 @@ def object_detecting(x_pos, current_pos):
     else:
         return False, current_pos
 
-def centroid_detecting(x_pos, current_pos):
-    global rotate_times, rotate_degree
-    screen_mid = 640 #屏幕中心点
-
-    if abs(x_pos - screen_mid) < 5:
-        return True
-
-    elif x_pos > screen_mid:
-        current_pos = current_pos - rotate_degree
-        info = str(6) + ',' + str(current_pos)
-        ard.write(str.encode(info))
-    else:
-        current_pos = current_pos + rotate_degree
-        info = str(6) + ',' + str(current_pos)
-        ard.write(str.encode(info))
-    return False
 
 
 def centroid_detecting(x_pos, current_pos):
     global rotate_times, rotate_degree
     screen_mid = 640 #屏幕中心点
 
-    if abs(x_pos - screen_mid) < 5:
+    if abs(x_pos - screen_mid) < 10:
         return True, current_pos
 
     elif x_pos > screen_mid:
