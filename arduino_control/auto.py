@@ -4,9 +4,21 @@ import time
 port = 'COM3'
 ard = serial.Serial(port, 9600, timeout=5)
 
-def write_port(device,value):
-    info = str(device) + ',' + str(value)
-    ard.write(str.encode(info))
+def write_port(device,value,current_pos):
+    info = str(device) + ',' + str(current_pos)
+
+    if current_pos < value:
+        for i in range(value - current_pos):
+            current_pos += 1
+            ard.write(str.encode(info))
+            time.sleep(0.005)
+
+    else:
+        for i in range(current_pos - value):
+            current_pos -= 1
+            ard.write(str.encode(info))
+            time.sleep(0.005)
+
     time.sleep(0.2)  #delay
 
 
