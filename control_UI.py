@@ -72,7 +72,7 @@ class Slider_Control(QWidget):
         self.CRAW_slider = QSlider(Qt.Horizontal, self)
         self.CRAW_slider.setFocusPolicy(Qt.NoFocus)
         self.CRAW_slider.setMinimum(0)
-        self.CRAW_slider.setMaximum(58)
+        self.CRAW_slider.setMaximum(100)
         self.CRAW_slider.setValue(30)
         self.CRAW_slider.valueChanged.connect(self.CRAW_show)
         self.CRAW_slider.sliderReleased.connect(self.CRAW_changed)

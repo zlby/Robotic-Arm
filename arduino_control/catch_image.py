@@ -10,6 +10,8 @@ def get_position_of_box(yolo, message):
     # using yolov3 to detect cups
     boxes = make_detection(yolo, 'images/object.jpg')
 
+    flag = 0
+
     for box in boxes:
         if box['class'] != 'cup':
             continue
@@ -19,11 +21,12 @@ def get_position_of_box(yolo, message):
         region_cv = cv2.cvtColor(np.asarray(region), cv2.COLOR_RGB2BGR)
         region_cv = hist_cal(region_cv)
         region = Image.fromarray(cv2.cvtColor(region_cv, cv2.COLOR_BGR2RGB))
-        region.save(str(time.ctime()).replace(':', ' ') + 'box.jpg')
+        # region.save(str(time.ctime()).replace(':', ' ') + 'box.jpg')
         detect_objs = pyzbar.decode(region)
 
         # if there is no box detected, return -1
         if len(detect_objs) == 0:
+            flag = 1
             continue
 
         # detect qr code information
@@ -31,12 +34,16 @@ def get_position_of_box(yolo, message):
 
         # if the qrcode is not what we want, go ahead to another one
         if qrdata != message:
+            flag = 1
             continue
+
 
         middle_point  = int(round((box['left'] + box['right']) / 2))
 
         return middle_point
 
+    if flag == 1:
+        return -2
     return -1
 
 if __name__ == '__main__':
