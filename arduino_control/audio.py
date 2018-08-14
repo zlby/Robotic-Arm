@@ -89,6 +89,7 @@ class recoder:
         res = client.asr(self.get_file_content('test.wav'), 'wav', 16000, {
             'dev_pid': 1737,
         })
+        print(res['result'])
         return res['result'][0]
 
     def sort(self, message):

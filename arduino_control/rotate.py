@@ -8,7 +8,7 @@ import numpy as np
 
 
 port = 'COM3'
-ard = serial.Serial(port,9600,timeout=5)
+# ard = serial.Serial(port,9600,timeout=5)
 global initial_speed, rotate_degree, rotate_times
 initial_speed = -4
 rotate_degree = 1
@@ -130,8 +130,10 @@ def grab():
     # write_port(claw, 30)
 
     # time.sleep(0.5)
+def grab_drug(message):
+    print(message)
 
-if __name__ == '__main__':
+def fetch_drug(message):
     base_list = []
 
     current_position = 96
@@ -154,7 +156,7 @@ if __name__ == '__main__':
             break
 
 
-        position = get_position_of_box(yolo, 'drug A')
+        position = get_position_of_box(yolo, message)
 
         flag, current_position = object_detecting(position, current_position)
 
@@ -170,7 +172,7 @@ if __name__ == '__main__':
                 name = 'images/object.jpg'
                 cv2.imwrite(name, frame)
                 stop, current_position = centroid_detecting(position, current_position)
-                position = get_position_of_box(yolo, 'drug A')
+                position = get_position_of_box(yolo, message)
 
                 direction = np.sign(position - screen_mid)
                 if direction != init_direction:

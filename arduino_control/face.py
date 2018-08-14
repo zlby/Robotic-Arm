@@ -5,8 +5,8 @@ import time
 import face_recognition
 
 
-unknown_pic_path = '/Users/wonderful_xue/Desktop/Robotic-Arm/unknown_pictures'
-known_pic_path = '/Users/wonderful_xue/Desktop/Robotic-Arm/known_people'
+unknown_pic_path = 'F:\\PythonWorkplace\\Robotic-Arm\\arduino_control\\images\\unknown_people'
+known_pic_path = 'F:\\PythonWorkplace\\Robotic-Arm\\arduino_control\\images\\known_people'
 
 def get_cam():
 
@@ -33,7 +33,7 @@ def get_cam():
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
 
-                pic_name = 'save' + str(tag) + '.jpg'
+                pic_name = 'face.jpg'
                 pic_name = os.path.join(unknown_pic_path, pic_name)
                 cv2.imwrite(pic_name, frame)
                 break
@@ -74,7 +74,10 @@ def myFace_recognition(pic):
 
     # Find all the faces and face encodings in the unknown image
     unknown_face_locations = face_recognition.face_locations(unknown_image)
-    unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+    try:
+        unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+    except:
+        return 'Unknown'
 
     pil_image = Image.fromarray(unknown_image)
 
@@ -108,9 +111,10 @@ def myFace_recognition(pic):
 
     display_img = cv2.imread(save)
     cv2.imshow('show',display_img)
-    k = cv2.waitKey(delay=0)
-    if k == 27:                     # wait for ESC key to exit
-        cv2.destroyAllWindows()
+    cv2.waitKey(0)
+    # k = cv2.waitKey(delay=0)
+    # if k == 27:                     # wait for ESC key to exit
+    #     cv2.destroyAllWindows()
 
     return name
 
