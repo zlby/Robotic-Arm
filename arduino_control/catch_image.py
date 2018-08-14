@@ -2,6 +2,8 @@ from arduino_control.yolov3.yolo_video import make_detection
 from arduino_control.yolov3.yolo import YOLO, detect_video
 from PIL import Image
 from pyzbar import pyzbar
+from arduino_control.img_hist import *
+import time
 
 def get_position_of_box(yolo, message):
 
@@ -14,6 +16,10 @@ def get_position_of_box(yolo, message):
         im = Image.open('images/object.jpg')
         region = im.crop((box['left'], box['top'], box['right'], box['bottom']))
         # region.save('box.jpg')
+        region_cv = cv2.cvtColor(np.asarray(region), cv2.COLOR_RGB2BGR)
+        region_cv = hist_cal(region_cv)
+        region = Image.fromarray(cv2.cvtColor(region_cv, cv2.COLOR_BGR2RGB))
+        region.save(str(time.ctime()).replace(':', ' ') + 'box.jpg')
         detect_objs = pyzbar.decode(region)
 
         # if there is no box detected, return -1
