@@ -1,14 +1,14 @@
 //********************************************
-//* Robotic Arm with BLE control v1
+//* Robotic Arm with USB control
 //* for robotic arm 0
-//* By Benny Lo
-//* Jan 14 2018
+//* By Group 5
+//* Aug 15 2018
 //********************************************
 #include <CurieBLE.h>
 #include <Servo.h>
 #include <string.h>  
-#define ROBOT_NAME "BRobot-0"
-#define CRAW_MIN 0 //open 
+#define ROBOT_NAME "Group2"
+#define CRAW_MIN 0 //open
 #define CRAW_MAX 58 //close
 #define ELBOW_MIN   0
 #define ELBOW_MAX 140
@@ -22,14 +22,15 @@
 #define WRIST_Z_MAX 180
 #define BASE_MIN 0
 #define BASE_MAX 180
-#define ELBOW_DEFAULT 60
-#define SHOULDER_DEFAULT 100
-#define WRIST_X_DEFAULT 80
-#define WRIST_Y_DEFAULT 90
-#define WRIST_Z_DEFAULT 66
-#define BASE_DEFAULT 90
-#define CRAW_DEFAULT CRAW_MIN //fully opened
-Servo myservoA;  
+#define ELBOW_DEFAULT 110
+#define SHOULDER_DEFAULT 68
+#define WRIST_X_DEFAULT 87
+#define WRIST_Y_DEFAULT 70
+#define WRIST_Z_DEFAULT 65
+#define BASE_DEFAULT 96
+#define CRAW_DEFAULT 30 //fully opened
+#define GRAB_SPEED 500
+Servo myservoA;
 Servo myservoB;
 Servo myservoC;
 Servo myservoD;
@@ -38,6 +39,17 @@ Servo myservoF;
 Servo myservoG;//the craw
 int i,pos,myspeed;
 int sea,seb,sec,sed,see,sef,seg;
+
+void movement(Servo device, int movespeed, int des){
+  for(pos=0;pos<=movespeed;pos+=1)
+   {
+    device.write(int(map(pos,1,movespeed,device.read(),des)));
+    delay(1);
+   }
+}
+
+
+
 
 
 void myservosetup()  //set up the servo motors
@@ -49,7 +61,7 @@ void myservosetup()  //set up the servo motors
    see=myservoE.read();
    sef=myservoF.read();
    seg=myservoG.read();
-   
+
    myspeed=500;
    for(pos=0;pos<=myspeed;pos+=1)
    {
@@ -59,12 +71,40 @@ void myservosetup()  //set up the servo motors
     myservoD.write(int(map(pos,1,myspeed,sed,WRIST_Y_DEFAULT)));
     myservoE.write(int(map(pos,1,myspeed,see,WRIST_Z_DEFAULT)));
     myservoF.write(int(map(pos,1,myspeed,sef,BASE_DEFAULT)));
-    myservoG.write(int(map(pos,1,myspeed,seg,CRAW_DEFAULT)));    
+    myservoG.write(int(map(pos,1,myspeed,seg,CRAW_DEFAULT)));
     delay(1);
    }
+   delay(5);
 }
 
-void movement(int elbow_pos)
+void grab(){
+  movement(myservoA, GRAB_SPEED, 76);
+  movement(myservoB, GRAB_SPEED, 76);
+  movement(myservoE, GRAB_SPEED, 96);
+  movement(myservoG, GRAB_SPEED, 0);
+  movement(myservoA, GRAB_SPEED, 56);
+  movement(myservoB, GRAB_SPEED, 85);
+  movement(myservoE, GRAB_SPEED, 105);
+  movement(myservoA, GRAB_SPEED, 34);
+  movement(myservoB, GRAB_SPEED, 73);
+  movement(myservoA, GRAB_SPEED, 21);
+  movement(myservoB, GRAB_SPEED, 68);
+  movement(myservoE, GRAB_SPEED, 90);
+  movement(myservoB, GRAB_SPEED, 63);
+  movement(myservoG, GRAB_SPEED, 100);
+  movement(myservoA, GRAB_SPEED*3, 60);
+  movement(myservoB, GRAB_SPEED*3, 25);
+  movement(myservoA, GRAB_SPEED*5, 100);
+  //back
+  movement(myservoF, GRAB_SPEED*7, 96);
+  movement(myservoB, GRAB_SPEED * 5, 60);
+  movement(myservoA, GRAB_SPEED * 5, 60);
+  movement(myservoE, GRAB_SPEED * 3, 110);
+  movement(myservoG, GRAB_SPEED, 30);
+  myservosetup();
+}
+
+void movements(int elbow_pos)
 {
    sea=myservoA.read();
 
@@ -76,25 +116,25 @@ void movement(int elbow_pos)
    }
 }
 
-void setup() 
-{ 
+void setup()
+{
   Serial.begin(9600);
   //pinMode(13, OUTPUT);   LED control
-  
-  myservoA.attach(2);  
-  myservoB.attach(3); 
-  myservoC.attach(4); 
-  myservoD.attach(5); 
-  myservoE.attach(6); 
+
+  myservoA.attach(2);
+  myservoB.attach(3);
+  myservoC.attach(4);
+  myservoD.attach(5);
+  myservoE.attach(6);
   myservoF.attach(8);
-  myservoG.attach(7); 
-  
+  myservoG.attach(7);
+
   myservosetup();
 
 }
 
-void loop() 
-{ 
+void loop()
+{
   	String readString = "";
   	while(!Serial.available()){}
  	while(Serial.available()){
@@ -105,7 +145,7 @@ void loop()
  	}
 
  	if (readString.length() >0){
-    	Serial.print("Arduino received: ");  
+    	Serial.print("Arduino received: ");
 		Serial.println(readString); //see what was received
   	}
 
@@ -124,6 +164,9 @@ void loop()
    seg=myservoG.read();
 
  	switch(devno){
+    case 0:
+      grab();
+      break;
  		case 1:
  			for(pos=0;pos<=myspeed;pos+=1){
     			myservoA.write(int(map(pos,1,myspeed,sea,devangle)));   
