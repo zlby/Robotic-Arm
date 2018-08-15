@@ -5,15 +5,16 @@ import numpy as np
 import wave
 from aip import AipSpeech
 import re
+import speech_recognition as sr
 
 
 class recoder:
-    NUM_SAMPLES = 2000  # pyaudio内置缓冲大小
+    NUM_SAMPLES = 2000  # pyaudio 内置缓冲大小
     SAMPLING_RATE = 16000  # 取样频率
     LEVEL = 500  # 声音保存的阈值
     COUNT_NUM = 20  # NUM_SAMPLES个取样之内出现COUNT_NUM个大于LEVEL的取样则记录声音
     SAVE_LENGTH = 8  # 声音记录的最小长度：SAVE_LENGTH * NUM_SAMPLES 个取样
-    TIME_COUNT = 100  # 录音时间，单位s
+    TIME_COUNT = 50  # 录音时间
 
     Voice_String = []
 
@@ -79,7 +80,7 @@ class recoder:
         with open(filename, 'rb') as fp:
             return fp.read()
 
-    def identify(self):
+    def baidu_identify(self):
         APP_ID = '11594055'
         API_KEY = 'FKQrE66hjEgSmUsdVwQ7ctaL'
         SECRET_KEY = 'jOF0FgcIAVuV88PRAfGGzW7q8vdMGc1c'
@@ -89,39 +90,64 @@ class recoder:
         res = client.asr(self.get_file_content('test.wav'), 'wav', 16000, {
             'dev_pid': 1737,
         })
-        print(res['result'])
         return res['result'][0]
+
+    def wit_identify(self):
+        r = sr.Recognizer()
+
+        with sr.AudioFile('test.wav') as source:
+            audio = r.record(source)  # read the entire audio file
+
+        WIT_AI_KEY = 'S6STHZT2D6UF25MRRGQRD5O5LFFAYANP'
+
+        try:
+            res = r.recognize_wit(audio, key=WIT_AI_KEY)
+            return res
+        except sr.UnknownValueError:
+            print("Wit.ai could not understand audio")
+            return None
+        except sr.RequestError as e:
+            print("Could not request results from Wit.ai service; {0}".format(e))
+            return None
 
     def sort(self, message):
 
-        pattern = r'.*drug [a|b|c].*'
-        res = re.match(pattern, message)
-        if res != None:
-            if message.find('a') != -1:
-                return 'drug A'
-            elif message.find('b') != -1:
-                return 'drug B'
+        pattern = r'.*[a|b|c|A|B|C].*'
+        try:
+            res = re.match(pattern, message)
+            if res != None:
+
+                if (message.find('a') != -1) or (message.find('A') != -1):
+                    return 'drug A'
+                elif (message.find('b') != -1) or (message.find('B') != -1):
+                    return 'drug B'
+                else:
+                    return 'drug C'
             else:
-                return 'drug C'
-        else:
-            print('can not identify your instruction')
+                print('can not identify your instruction')
+                return None
+        except:
+            print('recognition failed , please try again ')
             return None
+
+
 
 
 if __name__ == "__main__":
     r = recoder()
     str = input('please tap r to start record ： ')
-    count = 0
     while True:
         if str == 'r':
             r.recoder()
             r.savewav("test.wav")
-            message = r.identify()
+            message = r.wit_identify()
             print(message)
             res = r.sort(message)
             if res:
+                print(res)
                 print('succeed')
                 exit(0)
             else:
-                count += 1
                 str = input('please tap r to start record ： ')
+
+

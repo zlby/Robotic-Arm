@@ -1,19 +1,20 @@
 import sys
 import time
 import serial
-from arduino_control.cam_control import *
+# from arduino_control.cam_control import *
 from arduino_control.catch_image import get_position_of_box
 from arduino_control.yolov3.yolo import YOLO
 import numpy as np
+import cv2
 
 
 port = 'COM3'
-# ard = serial.Serial(port,9600,timeout=5)
+ard = serial.Serial(port,9600,timeout=5)
 global initial_speed, rotate_degree, rotate_times
 initial_speed = -4
 rotate_degree = 1
 rotate_times = 0
-screen_mid = 360
+screen_mid = 320
 
 def object_detecting(x_pos, current_pos):
     """检测物体，未检测到前循环旋转"""
@@ -54,7 +55,7 @@ def centroid_detecting(x_pos, current_pos):
         ard.write(str.encode(info))
         return False, current_pos
 
-    if abs(x_pos - screen_mid) < 5:
+    if abs(x_pos - screen_mid) < 10:
         return True, current_pos
 
     elif x_pos > screen_mid:
@@ -133,13 +134,12 @@ def grab():
 def grab_drug(message):
     print(message)
 
-def fetch_drug(message):
+def fetch_drug(message, yolo):
     base_list = []
 
     current_position = 96
     cap = cv2.VideoCapture(1)
     count = 0
-    yolo = YOLO()
     while(True):
         count += 1
         time.sleep(0.2)
@@ -172,7 +172,7 @@ def fetch_drug(message):
                 name = 'images/object.jpg'
                 cv2.imwrite(name, frame)
                 stop, current_position = centroid_detecting(position, current_position)
-                position = get_position_of_box(yolo, message)
+                position = get_position_of_box(yolo, message, False)
 
                 direction = np.sign(position - screen_mid)
                 if direction != init_direction:
@@ -182,7 +182,7 @@ def fetch_drug(message):
             break
 
     grab()
-    yolo.close_session()
+    # yolo.close_session()
     cap.release()
     cv2.destroyAllWindows()
 

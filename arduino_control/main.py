@@ -1,8 +1,11 @@
 from arduino_control.audio import *
 from arduino_control.face import *
 from arduino_control.rotate import *
+from arduino_control.yolov3.yolo import YOLO
+import cv2
 
 if __name__ == '__main__':
+    yolo = YOLO()
     while(True):
         print("Please select mode:\n1.Face detection mode.\n2.Audio detection mode.")
         selection = input("Your Choice: ")
@@ -16,7 +19,7 @@ if __name__ == '__main__':
                     break
                 print('detection failed, please try again')
             print('detecting ' + name + '.\nFetching ' + res + ' for you....')
-            grab_drug(res)
+            fetch_drug(res, yolo)
 
         # audio detection
         elif selection == '2':
@@ -27,7 +30,7 @@ if __name__ == '__main__':
                 if str == 'r':
                     r.recoder()
                     r.savewav("test.wav")
-                    message = r.identify()
+                    message = r.wit_identify()
                     print(message)
                     res = r.sort(message)
                     if res:
@@ -36,8 +39,9 @@ if __name__ == '__main__':
                     else:
                         count += 1
                         str = input('please tap r to start record ： ')
-            grab_drug(res)
+            fetch_drug(res, yolo)
         elif selection == 'quit':
+            yolo.close_session()
             pass
         else:
             print("Please enter 1 or 2.")

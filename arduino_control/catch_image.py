@@ -5,7 +5,7 @@ from pyzbar import pyzbar
 from arduino_control.img_hist import *
 import time
 
-def get_position_of_box(yolo, message):
+def get_position_of_box(yolo, message, qrcode = True):
 
     # using yolov3 to detect cups
     boxes = make_detection(yolo, 'images/object.jpg')
@@ -15,6 +15,9 @@ def get_position_of_box(yolo, message):
     for box in boxes:
         if box['class'] != 'cup':
             continue
+        if qrcode == False:
+            middle_point = int(round((box['left'] + box['right']) / 2))
+            return middle_point
         im = Image.open('images/object.jpg')
         region = im.crop((box['left'], box['top'], box['right'], box['bottom']))
         # region.save('box.jpg')
