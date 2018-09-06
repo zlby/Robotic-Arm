@@ -1,7 +1,7 @@
 //********************************************
-//* Robotic Arm with BLE control v1
+//* Robotic Arm with USB control v1
 //* for robotic arm 0
-//* By Benny Lo
+//* By Lianboya Zhou
 //* Jan 14 2018
 //********************************************
 #include <CurieBLE.h>
